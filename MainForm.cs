@@ -14,6 +14,7 @@ namespace LemiLoader
     public partial class MainForm : Form
     {
         static private MainForm instance;
+        HackList l = new HackList();
 
         static public MainForm GetInstance()
         {
@@ -28,15 +29,7 @@ namespace LemiLoader
 
         private void injectButton_Click(object sender, EventArgs e)
         {
-            Hacks.BaseHack hack = null;
-            switch (this.hacksComboBox.SelectedIndex)
-            {
-                case (int)HackList.LemiGMOD:
-                    hack = new LemiGMOD();
-                    break;
-                default:
-                    break;
-            }
+            Hacks.BaseHack hack = l.GetList()[this.hacksComboBox.SelectedIndex];
 
             if (hack == null)
             {
@@ -45,6 +38,8 @@ namespace LemiLoader
             }
 
             hack.Inject();
+
+            //MainForm.GetInstance().SetStatusText("Ok");
         }
 
         public void SetStatusText(String text)
@@ -55,6 +50,22 @@ namespace LemiLoader
         public void SetProgressBarValue(int v)
         {
             this.progressBar.Value = v;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+           
+
+            IHackInit hackInit = new HackInit();
+
+            hackInit.init(l);
+
+            foreach (var i in l.GetList())
+            {
+                this.hacksComboBox.Items.Add(i.Hack.name);
+            }
+
+            
         }
 
         /*        private void hacksComboBox_SelectedIndexChanged(object sender, EventArgs e)
